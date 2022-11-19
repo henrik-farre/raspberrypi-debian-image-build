@@ -40,7 +40,7 @@ echo "* Configuring tzdata"
 echo "tzdata tzdata/Areas select Europe" | debconf-set-selections
 echo "tzdata tzdata/Zones/Europe select Copenhagen" | debconf-set-selections
 rm -f /etc/localtime /etc/timezone
-dpkg-reconfigure --frontend noninteractive locales
+dpkg-reconfigure --frontend noninteractive tzdata
 
 echo "* Configuring keyboard"
 cat > /etc/default/keyboard << EOF
@@ -59,8 +59,7 @@ EOF
 echo "* Configuring locales"
 echo "locales locales/default_environment_locale select da_DK.UTF-8" | debconf-set-selections
 echo "locales locales/locales_to_be_generated multiselect da_DK.UTF-8 UTF-8" | debconf-set-selections
-rm /etc/locale.gen
-dpkg-reconfigure --frontend noninteractive tzdata
+dpkg-reconfigure --frontend noninteractive locales
 
 # Works but returns errors about:
 # W: Couldn't identify type of root file system for fsck hook
