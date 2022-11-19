@@ -69,6 +69,10 @@ dpkg-reconfigure --frontend noninteractive tzdata
 echo "* Generating initramfs - ignore errors about fsck hook, and missing entries in /sys and /proc"
 update-initramfs -u -k all || true
 
+echo "* Disable wpa_supplicant"
+rm -f /etc/systemd/system/multi-user.target.wants/wpa_supplicant.service
+rm -f /etc/systemd/system/dbus-fi.w1.wpa_supplicant1.service
+
 echo "********************************************************************************"
 echo "*"
 echo "*"
