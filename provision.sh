@@ -25,6 +25,9 @@ echo "gpu_mem=16" >> /etc/default/raspi-firmware-custom
 sed -i 's|#ROOTPART=.*|ROOTPART="LABEL=RASPIROOT"|' /etc/default/raspi-firmware
 sed -i 's|#KERNEL_ARCH=.*|KERNEL_ARCH="arm64"|' /etc/default/raspi-firmware
 
+# Avoid initramfs trying to resume from swap
+echo 'RESUME="none"' > /etc/initramfs-tools/conf.d/resume
+
 cat > /etc/apt/sources.list << EOF
 deb http://deb.debian.org/debian bullseye main contrib non-free
 deb http://security.debian.org/ bullseye-security main contrib non-free
