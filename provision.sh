@@ -62,7 +62,11 @@ EOF
 echo "* Configuring locales"
 echo "locales locales/default_environment_locale select da_DK.UTF-8" | debconf-set-selections
 echo "locales locales/locales_to_be_generated multiselect da_DK.UTF-8 UTF-8" | debconf-set-selections
+# Move /etc/locale.gen or else dpkg-reconfigure will give the error: "*** update-locale: Error: invalid locale settings:  LANG=da_DK.UTF-8"
+mv /etc/locale.gen{,.bak}
 dpkg-reconfigure --frontend noninteractive locales
+# Restore /etc/locale.gen as Ansible needs it when setting locales
+mv /etc/locale.gen.bak /etc/locale.gen
 
 # Works but returns errors about:
 # W: Couldn't identify type of root file system for fsck hook
