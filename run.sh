@@ -33,7 +33,7 @@ export DEBIAN_FRONTEND=noninteractive
 # Setup section
 #
 # Ensure needed tools are installed
-apt install --no-install-recommends -q -y mmdebstrap qemu-user-static binfmt-support parted dosfstools systemd-container
+apt install --no-install-recommends -q -y mmdebstrap qemu-user-static binfmt-support parted dosfstools systemd-container arch-test
 
 #
 # Create partitions and filesystem section
