@@ -38,7 +38,7 @@ EOF
 
 echo "* Apt update and install extra packages"
 apt update -q -y
-apt install --no-install-recommends -q -y bash openssh-server curl systemd-timesyncd locales tzdata keyboard-configuration console-setup fake-hwclock python3
+apt install --no-install-recommends -q -y systemd-sysv bash openssh-server curl systemd-timesyncd locales tzdata keyboard-configuration console-setup fake-hwclock python3
 
 echo "* Configuring tzdata"
 echo "tzdata tzdata/Areas select Europe" | debconf-set-selections
@@ -119,7 +119,6 @@ sed -i 's|UsePAM.*|UsePAM no|' /etc/ssh/sshd_config
 echo "*"
 echo "*"
 echo "********************************************************************************"
-
 
 fake-hwclock save
 
