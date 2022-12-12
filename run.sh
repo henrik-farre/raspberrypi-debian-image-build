@@ -22,17 +22,37 @@ MMARCH=arm64
 # As defined at https://www.debian.org/doc/debian-policy/ch-archive.html#s-priorities
 # apt, required, important, or standard
 MMVARIANT=required
-YOURHOSTNAME=testpi
-NETPKG=network-manager,iproute2
+NETPKG=ifupdown,iproute2
+export NET_HOSTNAME=testpi
+export NET_STATIC_IP=192.168.0.100
+export NET_STATIC_NETMASK=255.255.255.0
+export NET_STATIC_GW=192.168.0.1
+export NET_STATIC_DNS=192.168.0.5
 RASPIFIRMWARE=raspi-firmware,firmware-brcm80211
 KERNELPKG=linux-image-arm64
 EXTRAPKG="busybox-static,debian-archive-keyring,udev,kmod,e2fsprogs,apt-utils,whiptail,firmware-linux-free,firmware-misc-nonfree"
+
+trap cleanup SIGHUP SIGINT SIGQUIT SIGABRT
+
+cleanup()
+{
+  #
+  # Cleanup section
+  #
+  echo "* Performing cleanup"
+  rm -f "${MNT_ROOT}/provision.sh"
+  rm -f "${MNT_ROOT}/.env"
+  umount "${MNT_ROOT}/boot/firmware/"
+  umount "${MNT_ROOT}"
+  rm -rf "${MNT_ROOT}" "${MNT_FIRM}"
+}
 
 export DEBIAN_FRONTEND=noninteractive
 #
 # Setup section
 #
 # Ensure needed tools are installed
+apt update
 apt install --no-install-recommends -q -y mmdebstrap qemu-user-static binfmt-support parted dosfstools systemd-container arch-test
 
 #
@@ -93,18 +113,15 @@ mount "${DEV_FILE_FIRM}" "${MNT_ROOT}/boot/firmware"
 #
 # Provision Debian section
 #
-echo "$YOURHOSTNAME" > "${MNT_ROOT}/etc/hostname"
-echo "127.0.1.1	${YOURHOSTNAME}" >> "${MNT_ROOT}/etc/hosts"
 
+# Copy provisioning script to target
 cp ./provision.sh "${MNT_ROOT}/"
+
+# Dump settings inside target
+env > "${MNT_ROOT}/.env"
+
 systemd-nspawn -q -D "${MNT_ROOT}" -a /provision.sh
 
 sed -i "s|${DEV_FILE_ROOT}|LABEL=RASPIROOT|" "${MNT_ROOT}/boot/firmware/cmdline.txt"
 
-#
-# Cleanup section
-#
-rm "${MNT_ROOT}/provision.sh"
-umount "${MNT_ROOT}/boot/firmware/"
-umount "${MNT_ROOT}"
-rm -rf "${MNT_ROOT}" "${MNT_FIRM}"
+cleanup
