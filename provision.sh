@@ -10,7 +10,8 @@ set -o pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
-echo "Running provisioning script"
+echo "** Provisioning script: starting"
+source /.env
 
 uname -a
 
@@ -75,9 +76,36 @@ mv /etc/locale.gen.bak /etc/locale.gen
 echo "* Generating initramfs - ignore errors about fsck hook, and missing entries in /sys and /proc"
 update-initramfs -u -k all || true
 
+echo "$NET_HOSTNAME" > "/etc/hostname"
+echo "127.0.1.1	${NET_HOSTNAME}" >> "/etc/hosts"
+
 echo "* Disable wpa_supplicant"
 rm -f /etc/systemd/system/multi-user.target.wants/wpa_supplicant.service
 rm -f /etc/systemd/system/dbus-fi.w1.wpa_supplicant1.service
+
+echo "* Setting static IP to $NET_STATIC_IP"
+cat > /etc/network/interfaces << EOF
+source-directory /etc/network/interfaces.d
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+allow-hotplug eth0
+EOF
+
+cat > /etc/network/interfaces.d/eth0 << EOF
+iface eth0 inet static
+      address $NET_STATIC_IP
+      netmask $NET_STATIC_NETMASK
+      gateway $NET_STATIC_GW
+EOF
+
+echo "* Setting DNS server to $NET_STATIC_DNS"
+cat > /etc/resolv.conf << EOF
+nameserver $NET_STATIC_DNS
+EOF
 
 echo "********************************************************************************"
 echo "*"
@@ -95,4 +123,4 @@ echo "**************************************************************************
 
 fake-hwclock save
 
-echo "Provisioning done"
+echo "** Provisioning script: done"
