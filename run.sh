@@ -25,7 +25,6 @@ MMVARIANT=required
 NETPKG=ifupdown,iproute2
 export NET_HOSTNAME=testpi
 export NET_STATIC_IP=192.168.0.100
-export NET_STATIC_NETMASK=255.255.255.0
 export NET_STATIC_GW=192.168.0.1
 export NET_STATIC_DNS=192.168.0.5
 RASPIFIRMWARE=raspi-firmware,firmware-brcm80211

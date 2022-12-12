@@ -97,8 +97,7 @@ EOF
 
 cat > /etc/network/interfaces.d/eth0 << EOF
 iface eth0 inet static
-      address $NET_STATIC_IP
-      netmask $NET_STATIC_NETMASK
+      address $NET_STATIC_IP/24
       gateway $NET_STATIC_GW
 EOF
 
