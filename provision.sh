@@ -38,7 +38,7 @@ EOF
 
 echo "* Apt update and install extra packages"
 apt update -q -y
-apt install --no-install-recommends -q -y systemd-sysv bash openssh-server curl systemd-timesyncd locales tzdata keyboard-configuration console-setup fake-hwclock python3
+apt install --no-install-recommends -q -y systemd-sysv bash openssh-server curl systemd-timesyncd locales tzdata keyboard-configuration console-setup fake-hwclock python3 dbus
 
 echo "* Configuring tzdata"
 echo "tzdata tzdata/Areas select Europe" | debconf-set-selections
